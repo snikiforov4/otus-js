@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<div>
+    <ol>
+        <li>Coffee</li>
+        <li id="tea">Tea</li>
+        <li>Milk</li>
+    </ol>
+</div>
+
+<div id="fruits">
+    <ol>
+        <li>Orange</li>
+        <li id="apple">Apple</li>
+        <li>Pineapple</li>
+    </ol>
+</div>
+
+<script>
+    const DELIMITER = '.';
+    // Если у элемнета есть id останавливаем поиск,
+    // даже несморя на то что это может быть не единственный элемент с таким id.
+    // В противном случае путь будет формироваться из имени элемента + его индекс относительно родителя.
+    // Поиск прекращается на document.body.
+    function getPath(node) {
+        if (node === document.body) {
+            return 'body';
+        }
+        let path = '';
+        if (node.id) {
+            path = `#${node.id}`;
+        } else {
+            let parent = node.parentElement;
+            let nodeIdx = Array.from(parent.children).indexOf(node);
+            let parentPath = getPath(parent);
+            path = `${parentPath}${DELIMITER}${node.nodeName.toLowerCase()}${nodeIdx}`
+        }
+
+        return path;
+    }
+
+    console.log(getPath(document.getElementById('fruits').children[0].children[2])); // Pineapple
+    // #fruits.ol0.li2
+    console.log(getPath(document.body.children[0].children[0].children[2])); // // Milk
+    // body.div0.ol0.li2
+    console.log(getPath(document.getElementById('apple')));
+    // #apple
+</script>
+
+
+</body>
+</html>
