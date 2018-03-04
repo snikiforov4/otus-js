@@ -17,6 +17,7 @@ function sum(num) {
 
 }
 
+// Tests
 console.log(sum());
 // 0
 console.log(sum(11)(2)(7)(6)(8)(8)());
