@@ -22,7 +22,8 @@
 </div>
 
 <script>
-    const DELIMITER = '.';
+    const DELIMITER = ' > ';
+    const childOf = (node, idx) => `${node.nodeName.toLowerCase()}:nth-child(${idx + 1})`;
     // Если у элемнета есть id останавливаем поиск,
     // даже несморя на то что это может быть не единственный элемент с таким id.
     // В противном случае путь будет формироваться из имени элемента + его индекс относительно родителя.
@@ -38,16 +39,16 @@
             let parent = node.parentElement;
             let nodeIdx = Array.from(parent.children).indexOf(node);
             let parentPath = getPath(parent);
-            path = `${parentPath}${DELIMITER}${node.nodeName.toLowerCase()}${nodeIdx}`
+            path = `${parentPath}${DELIMITER}${childOf(node, nodeIdx)}`
         }
 
         return path;
     }
 
     console.log(getPath(document.getElementById('fruits').children[0].children[2])); // Pineapple
-    // #fruits.ol0.li2
+    // #fruits > ol:nth-child(1) > li:nth-child(3)
     console.log(getPath(document.body.children[0].children[0].children[2])); // // Milk
-    // body.div0.ol0.li2
+    // body > div:nth-child(1) > ol:nth-child(1) > li:nth-child(3)
     console.log(getPath(document.getElementById('apple')));
     // #apple
 </script>
