@@ -23,11 +23,19 @@
 
 <script>
     const DELIMITER = ' > ';
-    const childOf = (node, idx) => `${node.nodeName.toLowerCase()}:nth-child(${idx + 1})`;
-    // Если у элемнета есть id останавливаем поиск,
-    // даже несморя на то что это может быть не единственный элемент с таким id.
-    // В противном случае путь будет формироваться из имени элемента + его индекс относительно родителя.
-    // Поиск прекращается на document.body.
+
+    function selectorOf(node) {
+        let children = Array.from(node.parentElement.children);
+        let selector = '';
+        if (children.length > 1) {
+            let nodeIdx = children.indexOf(node) + 1;
+            selector = `${node.nodeName.toLowerCase()}:nth-child(${nodeIdx})`;
+        } else {
+            selector = node.nodeName.toLowerCase();
+        }
+        return selector;
+    }
+
     function getPath(node) {
         if (node === document.body) {
             return 'body';
@@ -37,18 +45,17 @@
             path = `#${node.id}`;
         } else {
             let parent = node.parentElement;
-            let nodeIdx = Array.from(parent.children).indexOf(node);
-            let parentPath = getPath(parent);
-            path = `${parentPath}${DELIMITER}${childOf(node, nodeIdx)}`
+            path = `${getPath(parent)}${DELIMITER}${selectorOf(node)}`
         }
 
         return path;
     }
 
+    // Examples
     console.log(getPath(document.getElementById('fruits').children[0].children[2])); // Pineapple
-    // #fruits > ol:nth-child(1) > li:nth-child(3)
+    // #fruits > ol > li:nth-child(3)
     console.log(getPath(document.body.children[0].children[0].children[2])); // // Milk
-    // body > div:nth-child(1) > ol:nth-child(1) > li:nth-child(3)
+    // body > div:nth-child(1) > ol > li:nth-child(3)
     console.log(getPath(document.getElementById('apple')));
     // #apple
 </script>
