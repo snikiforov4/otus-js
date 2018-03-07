@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<div>
+    <ol>
+        <li>Coffee</li>
+        <li id="tea">Tea</li>
+        <li>Milk</li>
+    </ol>
+</div>
+
+<div id="fruits">
+    <ol>
+        <li>Orange</li>
+        <li id="apple">Apple</li>
+        <li>Pineapple</li>
+    </ol>
+</div>
+
+<script>
+    const DELIMITER = ' > ';
+
+    function selectorOf(node) {
+        let children = Array.from(node.parentElement.children);
+        let selector = '';
+        if (children.length > 1) {
+            let nodeIdx = children.indexOf(node) + 1;
+            selector = `${node.nodeName.toLowerCase()}:nth-child(${nodeIdx})`;
+        } else {
+            selector = node.nodeName.toLowerCase();
+        }
+        return selector;
+    }
+
+    function getPath(node) {
+        if (node === document.body) {
+            return 'body';
+        }
+        let path = '';
+        if (node.id) {
+            path = `#${node.id}`;
+        } else {
+            let parent = node.parentElement;
+            path = `${getPath(parent)}${DELIMITER}${selectorOf(node)}`
+        }
+
+        return path;
+    }
+
+    // Examples
+    console.log(getPath(document.getElementById('fruits').children[0].children[2])); // Pineapple
+    // #fruits > ol > li:nth-child(3)
+    console.log(getPath(document.body.children[0].children[0].children[2])); // // Milk
+    // body > div:nth-child(1) > ol > li:nth-child(3)
+    console.log(getPath(document.getElementById('apple')));
+    // #apple
+</script>
+
+
+</body>
+</html>
