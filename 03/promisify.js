@@ -1,27 +1,22 @@
 const fs = require('fs');
 
-function promisify(toWrap) {
+function promisify(original) {
+    if (typeof original !== "function") {
+        throw new TypeError('argument should be a function');
+    }
     return (...args) => {
         return new Promise((resolve, reject) => {
-            toWrap.apply(toWrap, [].concat(args, (err, res) => (err) ? reject(err) : resolve(res)))
+            original.apply(original, [].concat(args, (err, res) => (err) ? reject(err) : resolve(res)))
         });
     }
 }
 
-// DEFAULT
-fs.readFile(__filename, (err, data) => {
-    if (err) throw err;
-    console.log(data)
-});
+const promisedAccess = promisify(fs.access);
+promisedAccess(__filename, fs.constants.R_OK | fs.constants.W_OK)
+    .then(() => console.log('👍')).catch(() => console.log('no access!'));
+
+const promisedStat = promisify(fs.stat);
+promisedStat(__filename).then(stats => console.log(`File has been changed at: ${stats.ctime}`)).catch(console.log);
 
 const promisedReadFile = promisify(fs.readFile);
-promisedReadFile(__filename).then(data => console.log(data)).catch(err => console.log(`${err.message}`));
-
-
-// SINGLE
-fs.access(__filename, fs.constants.R_OK, (err) => {
-    console.log(err ? 'no access!' : '👍')
-});
-
-const promisedAccess = promisify(fs.access);
-promisedAccess(__filename, fs.constants.R_OK).then(() => console.log('👍')).catch(() => console.log('no access!'));
+promisedReadFile(__filename, {encoding: 'utf8'}).then(data => console.log(data)).catch(console.log);
