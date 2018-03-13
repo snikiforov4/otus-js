@@ -6,7 +6,7 @@ function promisify(original) {
     }
     return (...args) => {
         return new Promise((resolve, reject) => {
-            original.apply(original, [].concat(args, (err, res) => (err) ? reject(err) : resolve(res)))
+            original.apply(original, [...args, (err, res) => (err) ? reject(err) : resolve(res)]);
         });
     }
 }
