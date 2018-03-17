@@ -1,0 +1,25 @@
+{
+  "name": "tree",
+  "version": "1.0.0",
+  "description": "Awesome filewalker",
+  "main": "tree.js",
+  "scripts": {
+    "tree": "node printTree"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snikiforov4/otus-js.git"
+  },
+  "keywords": [
+    "tree",
+    "directory",
+    "dir",
+    "file"
+  ],
+  "author": "Serhii Nykyforov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/snikiforov4/otus-js/issues"
+  },
+  "homepage": "https://github.com/snikiforov4/otus-js#readme"
+}

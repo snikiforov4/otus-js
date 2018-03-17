@@ -1,20 +1,34 @@
 const fs = require('fs');
 const path = require('path');
+const EventEmitter = require('events');
 
-const walk = function(dir) {
-    let files = [], dirs = [];
-    dirs.push(path.basename(dir));
-    fs.readdirSync(dir).forEach(file => {
-        let fullPath = path.join(dir, file);
-        if (fs.statSync(fullPath).isDirectory()) {
-            let {dirs: d, files: f} = walk(fullPath);
-            dirs.push(...d);
-            files.push(...f);
-        } else {
-            files.push(file);
+
+// class WalkEmitter extends EventEmitter {}
+// const fileWalker = new WalkEmitter();
+
+
+function dirWalk(dirPath, action) {
+    fs.readdirSync(dirPath).forEach(entry => {
+        let entryPath = path.join(dirPath, entry);
+        let entryStats = fs.statSync(entryPath);
+        action(entryPath, entryStats);
+        if (entryStats.isDirectory()) {
+            dirWalk(entryPath, action);
         }
     });
-    return {dirs, files};
+}
+
+const walkSync = function(basePath, action) {
+    if (typeof basePath !== 'string') {
+        throw TypeError('argument should be string');
+    }
+    basePath = path.normalize(basePath);
+    let stats = fs.statSync(basePath);
+    if (!stats.isDirectory()) {
+        throw Error(`Path is not a directory: ${basePath}`)
+    }
+    action(basePath, stats);
+    dirWalk(basePath, action);
 };
 
-exports.walk = walk;
+exports.walkSync = walkSync;
