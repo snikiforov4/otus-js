@@ -2,6 +2,25 @@ const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 
+class Counter {
+    constructor(initValue = 0) {
+        this.i = initValue;
+    }
+
+    get() {
+        return this.i;
+    }
+
+    increment() {
+        this.i++;
+        return this.i;
+    }
+
+    decrement() {
+        this.i--;
+        return this.i;
+    }
+}
 
 class WalkEmitter extends EventEmitter {
     onEntry(onEntryFunction) {
@@ -20,7 +39,7 @@ class WalkEmitter extends EventEmitter {
         return this;
     };
 
-    onEnd(onEndFunction) {
+    onFinish(onEndFunction) {
         if (typeof onEndFunction !== 'function') {
             throw TypeError('argument should be function');
         }
@@ -54,6 +73,12 @@ const walkSync = function (basePath, action) {
     dirWalkSync(basePath, action);
 };
 
+function checkAndEmitEnd(doneCnt, emitter) {
+    if (doneCnt.get() === 0) {
+        emitter.emit('end');
+    }
+}
+
 function dirWalk(dirPath, stats, walkEmitter, doneCnt) {
     walkEmitter.emit('entry', dirPath, stats);
     fs.readdir(dirPath, (err, files) => {
@@ -63,7 +88,7 @@ function dirWalk(dirPath, stats, walkEmitter, doneCnt) {
         }
         files.forEach(entry => {
             let entryPath = path.join(dirPath, entry);
-            doneCnt[0]++;
+            doneCnt.increment();
             fs.stat(entryPath, (err, entryStats) => {
                 if (err) {
                     walkEmitter.emit('error', err);
@@ -72,14 +97,14 @@ function dirWalk(dirPath, stats, walkEmitter, doneCnt) {
                 if (entryStats.isDirectory()) {
                     dirWalk(entryPath, entryStats, walkEmitter, doneCnt);
                 } else {
-                    doneCnt[0]--;
+                    doneCnt.decrement();
                     walkEmitter.emit('entry', entryPath, entryStats);
                 }
+                checkAndEmitEnd(doneCnt, walkEmitter);
             });
         });
-        if (--doneCnt[0] === 0) {
-            walkEmitter.emit('end');
-        }
+        doneCnt.decrement();
+        checkAndEmitEnd(doneCnt, walkEmitter);
     });
 }
 
@@ -97,8 +122,7 @@ const walk = function (basePath, walkEmitter) {
             walkEmitter.emit('error', Error(`Path is not a directory: ${basePath}`));
             return;
         }
-        let doneCnt = [1];
-        dirWalk(basePath, stats, walkEmitter, doneCnt)
+        dirWalk(basePath, stats, walkEmitter, new Counter(1))
     });
 };
 

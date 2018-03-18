@@ -1,7 +1,10 @@
 const path = require("path");
 const {walkSync} = require('./tree');
 
-let baseDir = path.join(__dirname);
+let baseDir = __dirname;
+if (process.argv.length > 2) {
+    baseDir = process.argv[2];
+}
 
 walkSync(baseDir, (e, stats) => {
     if (baseDir === e) {

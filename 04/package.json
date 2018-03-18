@@ -1,10 +1,13 @@
 {
   "name": "tree",
   "version": "1.0.0",
-  "description": "Awesome filewalker",
+  "description": "Awesome File Walker",
   "main": "tree.js",
+  "dependencies": {},
+  "devDependencies": {},
   "scripts": {
-    "tree": "node printtree"
+    "tree": "node printtree",
+    "test": "node walktest"
   },
   "repository": {
     "type": "git",
@@ -13,8 +16,8 @@
   "keywords": [
     "tree",
     "directory",
-    "dir",
-    "file"
+    "file",
+    "fs"
   ],
   "author": "Serhii Nykyforov",
   "license": "ISC",

@@ -1,4 +1,3 @@
-const path = require("path");
 const {walk, WalkEmitter} = require('./tree');
 
 const walkEmitter = new WalkEmitter();
@@ -13,7 +12,10 @@ walkEmitter
         }
     })
     .onError(console.log)
-    .onEnd(() => console.log(res));
+    .onFinish(() => console.log(res));
 
-let baseDir = path.join(__dirname);
+let baseDir = __dirname;
+if (process.argv.length > 2) {
+    baseDir = process.argv[2];
+}
 walk(baseDir, walkEmitter);
