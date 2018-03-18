@@ -4,7 +4,7 @@
   "description": "Awesome filewalker",
   "main": "tree.js",
   "scripts": {
-    "tree": "node printTree"
+    "tree": "node printtree"
   },
   "repository": {
     "type": "git",
