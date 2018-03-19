@@ -2,6 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 
+function checkType(argument, type) {
+    if (typeof argument !== type) {
+        throw TypeError(`argument should be a ${type}`);
+    }
+}
+
 class Counter {
     constructor(initValue = 0) {
         this.i = initValue;
@@ -24,30 +30,23 @@ class Counter {
 
 class WalkEmitter extends EventEmitter {
     onEntry(onEntryFunction) {
-        if (typeof onEntryFunction !== 'function') {
-            throw TypeError('argument should be function');
-        }
+        checkType(onEntryFunction, 'function');
         this.on('entry', onEntryFunction);
         return this;
     };
 
     onError(onErrorFunction) {
-        if (typeof onErrorFunction !== 'function') {
-            throw TypeError('argument should be function');
-        }
+        checkType(onErrorFunction, 'function');
         this.on('error', onErrorFunction);
         return this;
     };
 
     onFinish(onEndFunction) {
-        if (typeof onEndFunction !== 'function') {
-            throw TypeError('argument should be function');
-        }
+        checkType(onEndFunction, 'function');
         this.on('end', onEndFunction);
         return this;
     };
 }
-
 
 function dirWalkSync(dirPath, action) {
     fs.readdirSync(dirPath).forEach(entry => {
@@ -61,9 +60,7 @@ function dirWalkSync(dirPath, action) {
 }
 
 const walkSync = function (basePath, action) {
-    if (typeof basePath !== 'string') {
-        throw TypeError('argument should be string');
-    }
+    checkType(basePath, 'string');
     basePath = path.normalize(basePath);
     let stats = fs.statSync(basePath);
     if (!stats.isDirectory()) {
@@ -109,9 +106,7 @@ function dirWalk(dirPath, stats, walkEmitter, doneCnt) {
 }
 
 const walk = function (basePath, walkEmitter) {
-    if (typeof basePath !== 'string') {
-        throw TypeError('argument should be string');
-    }
+    checkType(basePath, 'string');
     basePath = path.normalize(basePath);
     fs.stat(basePath, (err, stats) => {
         if (err) {
