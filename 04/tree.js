@@ -76,11 +76,17 @@ function checkAndEmitEnd(doneCnt, emitter) {
     }
 }
 
+function handleError(err, emitter, counter) {
+    emitter.emit('error', err);
+    counter.decrement();
+    checkAndEmitEnd(counter, emitter);
+}
+
 function dirWalk(dirPath, stats, walkEmitter, doneCnt) {
     walkEmitter.emit('entry', dirPath, stats);
     fs.readdir(dirPath, (err, files) => {
         if (err) {
-            walkEmitter.emit('error', err);
+            handleError(err, walkEmitter);
             return;
         }
         files.forEach(entry => {
@@ -88,7 +94,7 @@ function dirWalk(dirPath, stats, walkEmitter, doneCnt) {
             doneCnt.increment();
             fs.stat(entryPath, (err, entryStats) => {
                 if (err) {
-                    walkEmitter.emit('error', err);
+                    handleError(err, walkEmitter);
                     return;
                 }
                 if (entryStats.isDirectory()) {
