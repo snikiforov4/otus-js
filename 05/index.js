@@ -1,9 +1,9 @@
 const {Writable, Readable, Transform} = require('stream');
-
+const {RateLimiter} = require('limiter');
 
 class RandomNumbers extends Readable {
     constructor(min = 1, max = 100) {
-        super({objectMode: true});
+        super({highWaterMark: 10, objectMode: true});
         this._cnt = 0;
         this._max = 100;
         this._getNextNumber = function () {
@@ -12,8 +12,7 @@ class RandomNumbers extends Readable {
     }
 
     _read() {
-        const i = this._cnt++;
-        if (i > this._max)
+        if (++this._cnt > this._max)
             this.push(null);
         else {
             this.push(this._getNextNumber());
@@ -21,7 +20,7 @@ class RandomNumbers extends Readable {
     }
 }
 
-class ImposterFirst extends Transform {
+class ExchangeFirst extends Transform {
     constructor(imposter = 42) {
         super({readableObjectMode: true, writableObjectMode: true});
         this._wasFirst = false;
@@ -30,36 +29,33 @@ class ImposterFirst extends Transform {
 
     _transform(number, encoding, callback) {
         if (!this._wasFirst) {
-            console.log(`imposter origin number ${number} to ${this._imposter}`);
+            console.log(`exchange origin number ${number} to ${this._imposter}`);
             number = this._imposter;
             this._wasFirst = true;
         }
-
         callback(null, number);
     }
-
 }
 
-
-class NumbersPrinter extends Writable {
+class NumberPrinter extends Writable {
     constructor() {
-        super({objectMode: true});
+        super({highWaterMark: 10, objectMode: true});
+        this._limiter = new RateLimiter(1, 250);
+        this._received = 0;
     }
 
     _write(number, encoding, callback) {
-        console.log(`Received: ${number}`);
-        callback();
-    }
-
-    _final(callback) {
-        console.log(`NumberPrinter has finished writing numbers`);
-        callback();
+        this._limiter.removeTokens(1, (err) => {
+            if (err) callback(err);
+            console.log(`number: ${number}, handled: ${++this._received}`);
+            callback();
+        });
     }
 }
 
 const reader = new RandomNumbers();
-const transformer = new ImposterFirst();
-const writer = new NumbersPrinter();
+const transformer = new ExchangeFirst();
+const writer = new NumberPrinter();
 
 reader.pipe(transformer).pipe(writer).on('finish', () => console.log('Done'));
 
