@@ -14,6 +14,11 @@
             left: 10px;
         }
 
+        #second-div p {
+            /* make monkeys a bit bigger */
+            font-size: 20px;
+        }
+
         .draggable-div {
             position: absolute;
             z-index: 9;
@@ -42,15 +47,22 @@
 
 <div class="draggable-div" id="second-div">
     <div class="div-header">Click here to move</div>
-    <p>Movable</p>
-    <p>DIV</p>
+    <p>🙈</p>
+    <p>🙊</p>
+    <p>🙉</p>
 </div>
 
 </body>
 <script>
+    const intersectColor = "#f1914c", nonIntersectColor = "#2196F3";
+    $(document).ready(() => {
+        $(".draggable-div").each((_, e) => makeElementDraggable(e));
+    });
 
     const makeElementDraggable = function (element) {
-        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0, intersected = false;
+        const firstDiv = $("#first-div").first();
+        const secondDiv = $("#second-div").first();
         $(element).find('.div-header').first().mousedown(dragMouseDown);
 
         function dragMouseDown(e) {
@@ -63,6 +75,16 @@
             document.onmousemove = elementDrag;
         }
 
+        function checksForIntersectedElements() {
+            if (isIntersect(firstDiv, secondDiv)) {
+                $.each([firstDiv, secondDiv],
+                    (_, value) => value.find('.div-header').first().css({"background-color": intersectColor}))
+            } else {
+                $.each([firstDiv, secondDiv],
+                    (_, value) => value.find('.div-header').first().css({"background-color": nonIntersectColor}));
+            }
+        }
+
         function elementDrag(e) {
             e = e || window.event;
             // calculate the new cursor position:
@@ -73,6 +95,7 @@
             // set the element's new position:
             element.style.top = (element.offsetTop - pos2) + "px";
             element.style.left = (element.offsetLeft - pos1) + "px";
+            checksForIntersectedElements();
         }
 
         function closeDragElement() {
@@ -82,8 +105,27 @@
         }
     };
 
-    $(document).ready(() => {
-        $(".draggable-div").each((_, e) => makeElementDraggable(e));
-    });
+    const isIntersect = (function () {
+        function getPositions(element) {
+            let pos = $(element).position();
+            let width = $(element).width();
+            let height = $(element).height();
+            return [[pos.left, pos.left + width], [pos.top, pos.top + height]];
+        }
+
+        function comparePositions(p1, p2) {
+            let r1 = p1[0] < p2[0] ? p1 : p2;
+            let r2 = p1[0] < p2[0] ? p2 : p1;
+            return r1[1] > r2[0] || r1[0] === r2[0];
+        }
+
+        return function (element1, element2) {
+            let pos1 = getPositions(element1),
+                pos2 = getPositions(element2);
+            return comparePositions(pos1[0], pos2[0])
+                && comparePositions(pos1[1], pos2[1]);
+        };
+    })();
+
 </script>
 </html>
