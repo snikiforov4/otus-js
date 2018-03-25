@@ -1,0 +1,14 @@
+The simplest way to start using mongodb is using Docker.
+
+Create directory for saved or data
+mkdir {{ mongo_db_data }}
+
+Running mongodb in Docker:
+docker run -d -p 27017:27017 -v {{ mongo_db_data }}:/data/db mongo
+
+Connect to docker container:
+docker exec -ti {{ container_id }} /bin/bash
+
+List of the running containers:
+docker ps
+
