@@ -1,8 +1,7 @@
 const express = require('express');
 const utils = require('./utils');
 
-const parser = require('xml2json');
-const request = require('request');
+const Parser = require('rss-parser');
 // const MongoClient = require('mongodb').MongoClient;
 // const ObjectId = require('mongodb').ObjectID;
 
@@ -40,21 +39,13 @@ app.use(utils.requestTimeLog);
 // });
 
 const updateNews = function (uri) {
-    request(uri, function (error, response, body) {
-        if (error) {
-            console.log('statusCode: %s, error: %s', response && response.statusCode, error);
-        }
-        try {
-            let json = parser.toJson(body, {object: true});
-            const items = json.rss.channel.item;
-            for (let item of items) {
-                rssItems.push(item);
-            }
-            console.log("Updates has been received from RSS feed");
-        } catch (e) {
-            console.log("On parsing rss feed: %s", e)
-        }
-    });
+    let parser = new Parser();
+    parser.parseURL(uri).then((feed) => {
+        feed.items.forEach(item => {
+            rssItems.push(item);
+        });
+        console.log("Updates has been received from RSS feed")
+    }).catch(() => console.log("On rss feed update: %s", e));
 };
 
 app.get('/news/:id', (req, res) => {
