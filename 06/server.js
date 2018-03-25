@@ -8,7 +8,6 @@ const port = 8080;
 const rssURI = "https://www.eurekalert.org/rss/technology_engineering.xml";
 const dbUrl = 'mongodb://localhost:27017';
 const dbName = 'rss';
-
 const collectionName = "eureka";
 
 let app = express();
@@ -23,20 +22,28 @@ MongoClient.connect(dbUrl, (err, client) => {
     console.log("Connected successfully to server");
     db = client.db(dbName);
 
-//     app.get('/person/:id', (req, res) => {
-//         dbo.collection(PERSONS).findOne({_id: new ObjectId(req.params.id)}, (err, doc) => {
-//             if (err) console.log(err);
-//             res.send(doc);
-//         });
-//     });
-//
-//     app.post('/person', (req, res) => {
-//         const person = req.body;
-//         dbo.collection(PERSONS).insertOne(person, (err) => {
-//             if (err) console.log(err);
-//             res.send(person);
-//         });
-//     });
+    app.get('/news/:id', (req, res) => {
+        const collection = db.collection(collectionName);
+        collection.findOne({_id: new ObjectID(req.params.id)}, (err, doc) => {
+            if (err) {
+                console.log("On getting news with id=%s: %s", req.params.id, err);
+                res.sendStatus(500);
+            } else {
+                res.json(doc);
+            }
+        });
+    });
+
+    app.get('/news', (req, res) => {
+        const collection = db.collection(collectionName);
+        collection.find({}, {limit: 50}).toArray((err, docs) => {
+            if (err) {
+                console.log("On getting all news: %s", err);
+                res.sendStatus(500);
+            }
+            res.json(docs);
+        });
+    });
 
     app.listen(port, () => {
         console.log(`Server is running on http://localhost:${port}`);
@@ -56,17 +63,3 @@ const updateNews = function (db, uri) {
         });
     }).catch((err) => console.log("On rss feed update: %s", err));
 };
-
-app.get('/news/:id', (req, res) => {
-    try {
-        const item = rssItems[req.params.id - 1];
-        res.status(200).json(item);
-    } catch (e) {
-        console.log("On getting news with id=%s: %s", req.params.id, e);
-        res.sendStatus(500);
-    }
-});
-
-app.get('/news', (req, res) => {
-    res.send(rssItems);
-});
