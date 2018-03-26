@@ -1,8 +1,11 @@
 const series = require('../series');
 
 test('call each function passed as argument', () => {
-    expect.assertions(1);
-    const res = [];
-    return series(() => res.push(1), () => res.push(2))
-        .then(() => expect(res).toEqual([1, 2]));
+    expect.assertions(2);
+    const fn1 = jest.fn();
+    const fn2 = jest.fn();
+    return series(fn1, fn2).then(() => {
+        expect(fn1).toHaveBeenCalled();
+        expect(fn2).toHaveBeenCalled()
+    });
 });
