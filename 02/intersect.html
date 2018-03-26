@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
         #first-div {
             top: 10px;
@@ -55,15 +54,15 @@
 </body>
 <script>
     const intersectColor = "#f1914c", nonIntersectColor = "#2196F3";
-    $(document).ready(() => {
-        $(".draggable-div").each((_, e) => makeElementDraggable(e));
+    document.addEventListener('DOMContentLoaded', function () {
+        Array.from(document.getElementsByClassName('draggable-div')).forEach(e => makeElementDraggable(e))
     });
 
     const makeElementDraggable = function (element) {
-        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0, intersected = false;
-        const firstDiv = $("#first-div").first();
-        const secondDiv = $("#second-div").first();
-        $(element).find('.div-header').first().mousedown(dragMouseDown);
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        const firstDiv = document.getElementById('first-div');
+        const secondDiv = document.getElementById('second-div');
+        element.getElementsByClassName('div-header')[0].addEventListener('mousedown', dragMouseDown);
 
         function dragMouseDown(e) {
             e = e || window.event;
@@ -77,11 +76,11 @@
 
         function checksForIntersectedElements() {
             if (isIntersect(firstDiv, secondDiv)) {
-                $.each([firstDiv, secondDiv],
-                    (_, value) => value.find('.div-header').first().css({"background-color": intersectColor}))
+                [firstDiv, secondDiv].forEach((element) =>
+                    element.getElementsByClassName('div-header')[0].style.backgroundColor = intersectColor);
             } else {
-                $.each([firstDiv, secondDiv],
-                    (_, value) => value.find('.div-header').first().css({"background-color": nonIntersectColor}));
+                [firstDiv, secondDiv].forEach((element) =>
+                    element.getElementsByClassName('div-header')[0].style.backgroundColor = nonIntersectColor);
             }
         }
 
@@ -107,10 +106,8 @@
 
     const isIntersect = (function () {
         function getPositions(element) {
-            let pos = $(element).position();
-            let width = $(element).width();
-            let height = $(element).height();
-            return [[pos.left, pos.left + width], [pos.top, pos.top + height]];
+            let pos = element.getBoundingClientRect();
+            return [[pos.left, pos.left + pos.width], [pos.top, pos.top + pos.height]];
         }
 
         function comparePositions(p1, p2) {
