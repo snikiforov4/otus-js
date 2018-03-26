@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Serhii Nykyforov",
+  "devDependencies": {
+    "jest": "22.4.3"
+  }
+}
