@@ -35,3 +35,8 @@ test('skip rest of functions if next() was not called', () => {
         expect(skipped).toHaveBeenCalledTimes(0);
     });
 });
+
+test('return resolved promise if no one function was passed', async () => {
+    expect.assertions(1);
+    await expect(series()).resolves.toBe(undefined);
+});
