@@ -1,5 +1,4 @@
 {
-  "private": true,
   "scripts": {
     "test": "jest"
   },
@@ -10,5 +9,8 @@
   "dependencies": {},
   "jest": {
     "verbose": true
-  }
+  },
+  "files": [
+    "series.js"
+  ]
 }
