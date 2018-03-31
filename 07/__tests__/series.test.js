@@ -5,12 +5,12 @@ test('call each function passed as argument', () => {
     const fn1 = jest.fn().mockImplementation(next => next()).mockName('fn1');
     const fn2 = jest.fn().mockImplementation(next => next()).mockName('fn2');
     return series(fn1, fn2).then(() => {
-        expect(fn1).toHaveBeenCalled();
-        expect(fn2).toHaveBeenCalled();
+        expect(fn1).toHaveBeenCalledTimes(1);
+        expect(fn2).toHaveBeenCalledTimes(1);
     });
 });
 
-test('directly call last function on passing any parameter to next()', () => {
+test('skip rest of functions and call last function if any parameter was passed to next()', () => {
     expect.assertions(4);
     const passed = jest.fn().mockImplementation(next => next()).mockName('passed');
     const skipped = jest.fn().mockImplementation(next => next()).mockName('skipped');
