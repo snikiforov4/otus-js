@@ -23,3 +23,15 @@ test('directly call last function on passing any parameter to next()', () => {
         expect(last).toHaveBeenCalledTimes(1);
     });
 });
+
+test('skip rest of functions if next() was not called', () => {
+    expect.assertions(3);
+    const passed = jest.fn().mockImplementation(next => next()).mockName('passed');
+    const skipedCallingNext = jest.fn().mockName('doesNotCallNext');
+    const skipped = jest.fn().mockImplementation(next => next()).mockName('skipped');
+    return series(passed, passed, skipedCallingNext, skipped, skipped).then(() => {
+        expect(passed).toHaveBeenCalledTimes(2);
+        expect(skipedCallingNext).toHaveBeenCalledTimes(1);
+        expect(skipped).toHaveBeenCalledTimes(0);
+    });
+});
