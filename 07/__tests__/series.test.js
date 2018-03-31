@@ -27,11 +27,11 @@ test('directly call last function on passing any parameter to next()', () => {
 test('skip rest of functions if next() was not called', () => {
     expect.assertions(3);
     const passed = jest.fn().mockImplementation(next => next()).mockName('passed');
-    const skipedCallingNext = jest.fn().mockName('doesNotCallNext');
+    const skippedCallingNext = jest.fn().mockName('doesNotCallNext');
     const skipped = jest.fn().mockImplementation(next => next()).mockName('skipped');
-    return series(passed, passed, skipedCallingNext, skipped, skipped).then(() => {
+    return series(passed, passed, skippedCallingNext, skipped, skipped).then(() => {
         expect(passed).toHaveBeenCalledTimes(2);
-        expect(skipedCallingNext).toHaveBeenCalledTimes(1);
+        expect(skippedCallingNext).toHaveBeenCalledTimes(1);
         expect(skipped).toHaveBeenCalledTimes(0);
     });
 });
@@ -39,4 +39,13 @@ test('skip rest of functions if next() was not called', () => {
 test('return resolved promise if no one function was passed', async () => {
     expect.assertions(1);
     await expect(series()).resolves.toBe(undefined);
+});
+
+test('return rejected promise on error', async () => {
+    expect.assertions(3);
+    const common = jest.fn().mockImplementation(next => next()).mockName('common');
+    const failed = jest.fn().mockImplementation(() => {throw new Error('error')}).mockName('failed');
+    await expect(series(common, common, failed, common, common)).rejects.toThrowError('error');
+    expect(common).toHaveBeenCalledTimes(2);
+    expect(failed).toHaveBeenCalledTimes(1);
 });
