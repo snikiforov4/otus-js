@@ -75,13 +75,9 @@
         }
 
         function checksForIntersectedElements() {
-            if (isIntersect(firstDiv, secondDiv)) {
-                [firstDiv, secondDiv].forEach((element) =>
-                    element.getElementsByClassName('div-header')[0].style.backgroundColor = intersectColor);
-            } else {
-                [firstDiv, secondDiv].forEach((element) =>
-                    element.getElementsByClassName('div-header')[0].style.backgroundColor = nonIntersectColor);
-            }
+            let backgroundColor = isIntersect(firstDiv, secondDiv) ? intersectColor : nonIntersectColor;
+            [firstDiv, secondDiv].forEach((element) =>
+                element.getElementsByClassName('div-header')[0].style.backgroundColor = backgroundColor);
         }
 
         function elementDrag(e) {
