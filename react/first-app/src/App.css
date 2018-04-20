@@ -2,15 +2,41 @@
     text-align: center;
 }
 
-.App-logo {
-    animation: App-logo-spin infinite 20s linear;
-    height: 80px;
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
-.App-header {
+/* For devices larger than 400px */
+@media (min-width: 400px) {
+    .container {
+        width: 85%;
+        padding: 0;
+    }
+}
+
+/* For devices larger than 550px */
+@media (min-width: 550px) {
+    .container {
+        width: 80%;
+    }
+}
+
+.AppLogo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
+    float: left;
+}
+
+.AppHeader {
     background-color: #222;
-    height: 150px;
-    padding: 20px 20px 0;
+    height: 80px;
+    padding: 0 20px;
     color: white;
 }
 
@@ -23,23 +49,31 @@
     }
 }
 
-.App-nav {
+.AppNav {
     overflow: hidden;
-    padding: 25px 0;
+    height: 100%;
 }
 
-.App-nav a {
+.AppNav a {
+    display: flex;
+    height: 100%;
     color: inherit;
-    padding: 20px;
+    padding: 0 25px;
+    float: right;
     text-decoration: none;
-    font-size: 1.1em;
+    font-size: 1.2em;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
 }
 
-.App-nav a:hover {
+.AppNav a:hover {
     background-color: #111;
 }
 
-.App-footer {
+footer {
     position: fixed;
     left: 0;
     bottom: 0;
@@ -47,12 +81,9 @@
     background-color: #222;
     color: white;
     height: 60px;
-    margin-top: -60px;
-    padding: 15px 0;
+    padding: 0.5em;
 }
 
-.App-copyrights {
+.Copyrights {
     font-size: 1.2em;
 }
-
-

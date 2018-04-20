@@ -6,12 +6,12 @@ class Navigation extends Component {
     render() {
         const navContent = this.props.nav.map(({text, href}) => {
             return (
-                <a key={href} href={`${reactURL}${href}`}>{text}</a>
+                <a key={href} href={`${reactURL}${href}`} target='_blank'>{text}</a>
             );
         });
 
         return (
-            <nav className="App-nav">
+            <nav className="AppNav">
                 {navContent}
             </nav>
         );

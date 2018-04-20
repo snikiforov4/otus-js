@@ -4,8 +4,10 @@ import './App.css';
 class Footer extends Component {
     render() {
         return (
-            <footer className="App-footer">
-                <p className="App-copyrights">Copyright &copy; 2018 Serhii Nykyforov</p>
+            <footer>
+                <div className="container">
+                    <p className="Copyrights">&copy; 2018 Serhii Nykyforov</p>
+                </div>
             </footer>
         );
     }
