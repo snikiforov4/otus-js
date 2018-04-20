@@ -10,22 +10,14 @@ function checkType(argument, type) {
 
 class Counter {
     constructor(initValue = 0) {
-        this.i = initValue;
+        this.value = initValue;
     }
 
-    get() {
-        return this.i;
-    }
+    get() { return this.value }
 
-    increment() {
-        this.i++;
-        return this.i;
-    }
+    increment() { ++this.value }
 
-    decrement() {
-        this.i--;
-        return this.i;
-    }
+    decrement() { --this.value }
 }
 
 class WalkEmitter extends EventEmitter {
@@ -70,17 +62,21 @@ const walkSync = function (basePath, action) {
     dirWalkSync(basePath, action);
 };
 
-function checkAndEmitEnd(doneCnt, emitter) {
-    if (doneCnt.get() === 0) {
-        emitter.emit('end');
-    }
-}
-
-function handleError(err, emitter, counter) {
-    emitter.emit('error', err);
-    counter.decrement();
-    checkAndEmitEnd(counter, emitter);
-}
+const walk = function (basePath, walkEmitter) {
+    checkType(basePath, 'string');
+    basePath = path.normalize(basePath);
+    fs.stat(basePath, (err, stats) => {
+        if (err) {
+            walkEmitter.emit('error', err);
+            return;
+        }
+        if (!stats.isDirectory()) {
+            walkEmitter.emit('error', Error(`Path is not a directory: ${basePath}`));
+            return;
+        }
+        dirWalk(basePath, stats, walkEmitter, new Counter(1))
+    });
+};
 
 function dirWalk(dirPath, stats, walkEmitter, doneCnt) {
     walkEmitter.emit('entry', dirPath, stats);
@@ -111,20 +107,14 @@ function dirWalk(dirPath, stats, walkEmitter, doneCnt) {
     });
 }
 
-const walk = function (basePath, walkEmitter) {
-    checkType(basePath, 'string');
-    basePath = path.normalize(basePath);
-    fs.stat(basePath, (err, stats) => {
-        if (err) {
-            walkEmitter.emit('error', err);
-            return;
-        }
-        if (!stats.isDirectory()) {
-            walkEmitter.emit('error', Error(`Path is not a directory: ${basePath}`));
-            return;
-        }
-        dirWalk(basePath, stats, walkEmitter, new Counter(1))
-    });
+function handleError(err, emitter, counter) {
+    emitter.emit('error', err);
+    counter.decrement();
+    checkAndEmitEnd(counter, emitter);
+}
+
+const checkAndEmitEnd = (doneCnt, emitter) => {
+    if (doneCnt.get() === 0) emitter.emit('end')
 };
 
 exports.WalkEmitter = WalkEmitter;
