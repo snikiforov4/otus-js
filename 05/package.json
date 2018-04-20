@@ -1,0 +1,19 @@
+{
+  "name": "numberprinter",
+  "version": "1.0.0",
+  "description": "Streams to manipulate with numbers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "stream",
+    "number"
+  ],
+  "private": true,
+  "author": "Serhii Nykyforov",
+  "license": "ISC",
+  "dependencies": {
+    "limiter": "1.1.2"
+  }
+}
