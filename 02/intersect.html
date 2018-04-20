@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #first-div {
+            top: 10px;
+            left: 200px;
+        }
+
+        #second-div {
+            top: 10px;
+            left: 10px;
+        }
+
+        #second-div p {
+            /* make monkeys a bit bigger */
+            font-size: 20px;
+        }
+
+        .draggable-div {
+            position: absolute;
+            z-index: 9;
+            background-color: #f1f1f1;
+            border: 1px solid #d3d3d3;
+            text-align: center;
+        }
+
+        .div-header {
+            padding: 10px;
+            cursor: move;
+            z-index: 10;
+            background-color: #2196F3;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="draggable-div" id="first-div">
+    <div class="div-header">Click here to move</div>
+    <p>Move</p>
+    <p>me</p>
+    <p>somewhere</p>
+</div>
+
+<div class="draggable-div" id="second-div">
+    <div class="div-header">Click here to move</div>
+    <p>🙈</p>
+    <p>🙊</p>
+    <p>🙉</p>
+</div>
+
+</body>
+<script>
+    const intersectColor = "#f1914c", nonIntersectColor = "#2196F3";
+    document.addEventListener('DOMContentLoaded', function () {
+        Array.from(document.getElementsByClassName('draggable-div')).forEach(e => makeElementDraggable(e))
+    });
+
+    const makeElementDraggable = function (element) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        const firstDiv = document.getElementById('first-div');
+        const secondDiv = document.getElementById('second-div');
+        element.getElementsByClassName('div-header')[0].addEventListener('mousedown', dragMouseDown);
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function checksForIntersectedElements() {
+            let backgroundColor = isIntersect(firstDiv, secondDiv) ? intersectColor : nonIntersectColor;
+            [firstDiv, secondDiv].forEach((element) =>
+                element.getElementsByClassName('div-header')[0].style.backgroundColor = backgroundColor);
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            element.style.top = (element.offsetTop - pos2) + "px";
+            element.style.left = (element.offsetLeft - pos1) + "px";
+            checksForIntersectedElements();
+        }
+
+        function closeDragElement() {
+            /* stop moving when mouse button is released:*/
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    };
+
+    const isIntersect = (function () {
+        function getPositions(element) {
+            let pos = element.getBoundingClientRect();
+            return [[pos.left, pos.left + pos.width], [pos.top, pos.top + pos.height]];
+        }
+
+        function comparePositions(p1, p2) {
+            let r1 = p1[0] < p2[0] ? p1 : p2;
+            let r2 = p1[0] < p2[0] ? p2 : p1;
+            return r1[1] > r2[0] || r1[0] === r2[0];
+        }
+
+        return function (element1, element2) {
+            let pos1 = getPositions(element1),
+                pos2 = getPositions(element2);
+            return comparePositions(pos1[0], pos2[0])
+                && comparePositions(pos1[1], pos2[1]);
+        };
+    })();
+
+</script>
+</html>
