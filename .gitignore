@@ -2,6 +2,8 @@
 .idea
 *.iml
 
+# common
+*.log
+
 # NodeJS
 node_modules/
-*.log
