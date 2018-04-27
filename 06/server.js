@@ -2,8 +2,8 @@ const express = require('express');
 const {MongoClient} = require('mongodb');
 const mw = require('./app/middleware');
 const dbConfig = require('./app/config/db');
+const appConfig = require('./app/config/app');
 
-const port = 8080;
 let app = express();
 app.use(mw.requestLogger);
 
@@ -13,11 +13,11 @@ MongoClient.connect(dbConfig.url, (err, client) => {
         throw err;
     }
     console.log("Connected successfully to server");
-    db = client.db(dbConfig.name);
+    const db = client.db(dbConfig.name);
     require('./app/routes')(app, db);
     app.use(mw.errorHandler);
-    app.listen(port, () => {
-        console.log(`Server is running on http://localhost:${port}`);
+    app.listen(appConfig.port, () => {
+        console.log(`Server is running on http://localhost:${appConfig.port}`);
     });
     require('./app/rss').receiveLatestNews(db);
 });
