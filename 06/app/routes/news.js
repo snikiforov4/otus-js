@@ -8,9 +8,9 @@ module.exports = function (app, db) {
             if (err) {
                 console.log("On getting news with id=%s: %s", req.params.id, err);
                 res.sendStatus(500);
-            } else {
-                res.json(doc);
+                return
             }
+            res.json(doc);
         });
     });
 
@@ -20,6 +20,7 @@ module.exports = function (app, db) {
             if (err) {
                 console.log("On getting all news: %s", err);
                 res.sendStatus(500);
+                return
             }
             res.json(docs);
         });
