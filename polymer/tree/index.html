@@ -41,43 +41,43 @@
     </style>
 </head>
 <body>
-    <div id="root"></div>
+<div id="root"></div>
 </body>
 <script>
   const tree = {
-    type: 'dir',
+    id: 'tree-1',
     name: 'app',
-    children: [
+    items: [
       {
-        type: 'file',
+        id: 'leaf-1',
         name: 'index.html'
       },
       {
-        type: 'dir',
+        id: 'tree-2',
         name: 'js',
-        children: [
+        items: [
           {
-            type: 'file',
+            id: 'leaf-2',
             name: 'main.js'
           },
           {
-            type: 'file',
+            id: 'leaf-3',
             name: 'app.js'
           },
           {
-            type: 'file',
+            id: 'leaf-4',
             name: 'misc.js'
           },
           {
-            type: 'dir',
+            id: 'tree-3',
             name: 'vendor',
-            children: [
+            items: [
               {
-                type: 'file',
+                id: 'leaf-5',
                 name: 'jquery.js'
               },
               {
-                type: 'file',
+                id: 'leaf-6',
                 name: 'underscore.js'
               }
             ]
@@ -85,15 +85,15 @@
         ]
       },
       {
-        type: 'dir',
+        id: 'tree-4',
         name: 'css',
-        children: [
+        items: [
           {
-            type: 'file',
+            id: 'leaf-7',
             name: 'reset.css'
           },
           {
-            type: 'file',
+            id: 'leaf-8',
             name: 'main.css'
           }
         ]
@@ -101,23 +101,42 @@
     ]
   };
 
-  function displayJsonTree(data) {
-    let htmlRetStr = "<ul class='folder-container'>";
-    for (let key in data) {
-      if (!data.hasOwnProperty(key)) continue;
-      if (typeof(data[key]) === 'object' && data[key] != null) {
-        htmlRetStr += displayJsonTree(data[key]);
-        htmlRetStr += '</ul></li>';
-      } else if (data[key] === 'dir') {
-        htmlRetStr += "<li class='folder-item'>" + data["name"] + "</li><li class='folder-wrapper'>";
+  function buildTree(data) {
+    let ulElement = document.createElement('ul');
+    ulElement.classList.add('folder-container');
+    if (Array.isArray(data)) {
+      for (let node of data) {
+        buildNode(ulElement, node);
       }
-      else if (key == 'name' && data['type'] != 'dir') {
-        htmlRetStr += "<li class='file-item'>" + data['name'] + "</li>";
-      }
+    } else {
+      buildNode(ulElement, data);
     }
-    return (htmlRetStr);
+    return ulElement;
   }
 
-  document.getElementById("root").innerHTML = displayJsonTree(tree);
+  function buildNode(root, data) {
+    if (data.hasOwnProperty('items')) {
+      let treeLiElement = document.createElement('li');
+      treeLiElement.classList.add('folder-item');
+      treeLiElement.appendChild(document.createTextNode(data['name']));
+      root.appendChild(treeLiElement);
+
+      let liLeafElement = document.createElement('li');
+      liLeafElement.classList.add('folder-wrapper');
+      liLeafElement.appendChild(buildTree(data['items']));
+      root.appendChild(liLeafElement);
+    } else {
+      root.appendChild(buildLeaf(data));
+    }
+  }
+
+  function buildLeaf(node) {
+    let liElement = document.createElement('li');
+    liElement.classList.add('file-item');
+    liElement.appendChild(document.createTextNode(node['name']));
+    return liElement
+  }
+
+  document.getElementById("root").appendChild(buildTree(tree));
 </script>
 </html>
