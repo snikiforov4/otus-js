@@ -1,0 +1,89 @@
+.App {
+    text-align: center;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* For devices larger than 400px */
+@media (min-width: 400px) {
+    .container {
+        width: 85%;
+        padding: 0;
+    }
+}
+
+/* For devices larger than 550px */
+@media (min-width: 550px) {
+    .container {
+        width: 80%;
+    }
+}
+
+.AppLogo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
+    float: left;
+}
+
+.AppHeader {
+    background-color: #222;
+    height: 80px;
+    padding: 0 20px;
+    color: white;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.AppNav {
+    overflow: hidden;
+    height: 100%;
+}
+
+.AppNav a {
+    display: flex;
+    height: 100%;
+    color: inherit;
+    padding: 0 25px;
+    float: right;
+    text-decoration: none;
+    font-size: 1.2em;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+}
+
+.AppNav a:hover {
+    background-color: #111;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #222;
+    color: white;
+    height: 60px;
+    padding: 0.5em;
+}
+
+.Copyrights {
+    font-size: 1.2em;
+}
