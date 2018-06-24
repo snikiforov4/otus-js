@@ -17,34 +17,6 @@
 <script>
   customElements.define(TreeItem.is, TreeItem);
   customElements.define(LeafItem.is, LeafItem);
-
-  function buildNode(data) {
-    if (data.hasOwnProperty('items')) {
-      return buildTree(data['id'], data['name'], data['items']);
-    } else {
-      return buildLeaf(data['id'], data['name']);
-    }
-  }
-
-  function buildTree(id, text, items) {
-    let tree = document.createElement(TreeItem.is);
-    tree.id = id;
-    tree.appendChild(document.createTextNode(text));
-    for (let node of items) {
-      let itemsTree = buildNode(node);
-      itemsTree.slot = 'items';
-      tree.appendChild(itemsTree);
-    }
-    return tree
-  }
-
-  function buildLeaf(id, text) {
-    let leaf = document.createElement(LeafItem.is);
-    leaf.id = id;
-    leaf.appendChild(document.createTextNode(text));
-    return leaf
-  }
-
-  document.getElementById("root").appendChild(buildNode(treeScheme));
+  document.getElementById("root").appendChild(TreeItem.from(treeScheme));
 </script>
 </html>

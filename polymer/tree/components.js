@@ -36,6 +36,27 @@ class TreeItem extends HTMLElement {
   static get is() {
     return 'tree-item'
   }
+
+  static from(data) {
+    if (data.hasOwnProperty('items')) {
+      return this.create(data['id'], data['name'], data['items']);
+    } else {
+      return LeafItem.create(data['id'], data['name']);
+    }
+  }
+
+  static create(id, text = 'Unnamed tree node', items) {
+    let tree = document.createElement(TreeItem.is);
+    tree.id = id;
+    tree.appendChild(document.createTextNode(text));
+    for (let node of items) {
+      let itemsTree = this.from(node);
+      itemsTree.slot = 'items';
+      tree.appendChild(itemsTree);
+    }
+    return tree
+  }
+
 }
 
 class LeafItem extends HTMLElement {
@@ -62,4 +83,12 @@ class LeafItem extends HTMLElement {
   static get is() {
     return 'leaf-item'
   }
+
+  static create(id, text = 'Unnamed leaf') {
+    let leaf = document.createElement(LeafItem.is);
+    leaf.id = id;
+    leaf.appendChild(document.createTextNode(text));
+    return leaf
+  }
+
 }
